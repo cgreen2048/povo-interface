@@ -160,7 +160,9 @@ const registerForClasses = (planName: string, courseNumbers: string[]) => {
   padding: 20px;
   gap: 20px;
   height: 100%;
-  align-items: stretch;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   box-sizing: border-box;
 }
 

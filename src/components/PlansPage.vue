@@ -165,8 +165,10 @@ const dropCourses = () => {
 .container {
   display: flex;
   padding: 20px;
+  width: 100%;
   gap: 20px;
   box-sizing: border-box;
+  justify-content: center;
 }
 
 .plans-block {
