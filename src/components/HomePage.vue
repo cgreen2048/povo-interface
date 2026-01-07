@@ -1,8 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-center gap-12">
-    <div class="title-button">
-      <span class="title-card w-auto h-auto p-8 bg-[#0c2340] text-white text-6xl rounded-3xl font-bold">POVO Course Registration</span>
-    </div>
+    <span class="title-card w-auto h-auto p-8 bg-[#0c2340] text-white text-6xl rounded-3xl font-bold">POVO Course Registration</span>
     <span class="header-info">Click one of the page buttons below to get started on registration!</span>
     <span class="home-buttons">
       <BaseButton :buttonName="'My Course Plans'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'CoursePlansPage')"></BaseButton>
@@ -34,7 +32,6 @@ const emit = defineEmits(["toggle-page"]);
   color: black;
   font-size: 24px;
   font-weight: 700px;
-  gap: 40px 200px;
 }
 
 .home-buttons {

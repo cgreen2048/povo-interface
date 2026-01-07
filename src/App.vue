@@ -1,17 +1,23 @@
 <template>
   <div>
-    <NavBar v-if="route.name" class="lg:block"></NavBar>
-    <div class="main-area text-center w-full h-full min-h-screen items-center justify-center flex flex-col overflow-auto p-4" id="main-area">
+    <NavBar v-if="route.name" class="lg:block" />
+
+    <div
+      class="main-area text-center w-full h-full min-h-screen items-center justify-center flex flex-col overflow-auto p-4"
+      id="main-area"
+    >
       <div class="flex flex-1 items-center justify-center">
         <Transition name="fade" mode="out-in">
           <router-view class="z-10 w-full" />
         </Transition>
       </div>
+
       <footer class="w-full justify-center mt-auto text-xs lg:text-sm text-muted-green z-10">
         <span>© 2025 Clair Green. All rights reserved.</span>
       </footer>
     </div>
   </div>
+</template>
   <!-- <div class="page">
     <NavBar></NavBar>
     <Transition name="fade" mode="out-in">
@@ -70,7 +76,7 @@
       @select-plan="selectPlan">
     </SearchPage>
   </div> -->
-</template>
+
 
 <script lang="ts" setup>
 //import { ref } from 'vue';
@@ -105,19 +111,19 @@ const route = useRoute();
 // }
 
 // // ### PLANS ###
-// interface Course {
-//   name: string;
-//   professor: string;
-//   time: string;
-//   dates: string;
-//   credits: string;
-//   location: string;
-//   requirements: string;
-//   description: string
-//   registered?: boolean
-//   inPlan? : boolean,
-// }
-
+export type Course = {
+  name: string;
+  professor: string;
+  time: string;
+  dates: string;
+  credits: string;
+  location: string;
+  requirements: string;
+  description: string
+  registered?: boolean
+  inPlan? : boolean,
+}
+export type CoursePlans = Record<string, Record<string, Course>>
 // const coursePlans = ref<Record<string, Record<string, Course>>>({
 //   "Heavy CS": {
 //     "CSE 30311": {
@@ -222,12 +228,7 @@ const route = useRoute();
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50; 
-  min-height: 100%;
+  color: #4a6350;
 }
 
 .main-area {
@@ -235,8 +236,8 @@ const route = useRoute();
 }
 
 html, body {
-  height: 100%;
-  margin: 0px;
+  margin: 0;
   padding: 0;
+  height: auto; 
 }
 </style>

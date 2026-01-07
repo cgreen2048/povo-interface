@@ -68,27 +68,84 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, defineProps, defineEmits } from 'vue'
+import { ref, defineProps, defineEmits, withDefaults } from 'vue'
 import BaseButton from '../global/BaseButton.vue'
-
-interface Course {
-  name: string;
-  professor: string;
-  time: string;
-  dates: string;
-  location: string;
-  description: string;
-  credits: string;
-  requirements: string;
-  registered?: boolean;
-  inPlan? : boolean;
-}
+import type { Course, CoursePlans } from '@/App.vue';
 
 interface Props {
-  coursePlans: Record<string, Record<string, Course>>;
-  currentPlan: string;
+  coursePlans?: CoursePlans
+  currentPlan?: string
 }
-const props = defineProps<Props>();
+
+const props = withDefaults(defineProps<Props>(), {
+  coursePlans: {
+    "Heavy CS": {
+      "CSE 30311": {
+        name: "Theory of Computing",
+        professor: "David Chiang",
+        time: "2:00PM-3:15PM",
+        dates: "TR",
+        location: "DeBartolo Hall 126",
+        credits: "3",
+        requirements: "CSE Major Requirement",
+        description:
+          "Introduction to formal languages and automata, computability theory, and complexity theory with the goal of developing understanding of the power and limits of different computational models. Topics covered include: regular languages and finite automata; context-free grammars and pushdown automata; Turing machines; undecidable languages; the classes P and NP; NP completeness",
+        inPlan: true,
+      },
+      "CSE 30124": {
+        name: "Introduction to Artificial Intelligence",
+        professor: "William Theisen",
+        time: "2:00PM-3:15PM",
+        dates: "MW",
+        location: "DeBartolo Hall 155",
+        credits: "3",
+        requirements: "CSE Elective",
+        description:
+          "Foundational concepts and techniques in AI and machine learning. Historical overview of the field. Search and logic programming. Canonical machine learning tasks and algorithms: supervised and unsupervised learning (classification and regression). Essential concepts from probability and statistics relevant to machine learning. Performance characterization. Modern software environments for machine learning and AI programming. Applications in unsupervised and supervised learning from image and textual data.",
+        inPlan: true,
+      },
+    },
+    "Major Reqs": {
+      "CSE 30311": {
+        name: "Theory of Computing",
+        professor: "David Chiang",
+        time: "2:00PM-3:15PM",
+        dates: "TR",
+        location: "DeBartolo Hall 126",
+        credits: "3",
+        requirements: "CSE Major Requirement",
+        description:
+          "Introduction to formal languages and automata, computability theory, and complexity theory with the goal of developing understanding of the power and limits of different computational models. Topics covered include: regular languages and finite automata; context-free grammars and pushdown automata; Turing machines; undecidable languages; the classes P and NP; NP completeness",
+        inPlan: true,
+      },
+      "CSE 30341": {
+        name: "Operating System Principles",
+        professor: "Douglas Thain",
+        time: "9:30AM-10:45AM",
+        dates: "TR",
+        location: "Pasquerilla Center 107",
+        credits: "3",
+        requirements: "CSE Major Requirement",
+        description:
+          "Introduction to all aspects of modern operating systems. Topics include process structure and synchronization, interprocess communication, memory management, file systems, security, I/O, and distributed files systems",
+        inPlan: true,
+      },
+      "MATH 30750": {
+        name: "Real Analysis",
+        professor: "Qing Han",
+        time: "9:25AM-10:15AM",
+        dates: "MWF",
+        location: "Riley Hall 200",
+        credits: "3",
+        requirements: "CHEM Elective, WKQR Core Quantitative Reasoning",
+        description:
+          "A rigorous treatment of differential and integral calculus. Topics include a review of sequences and continuity, differentiability, Taylor's theorem, integration, the fundamental theorem of Calculus, pointwise and uniform convergence, and power series.",
+        inPlan: true,
+      },
+    },
+  },
+  currentPlan: "Heavy CS",
+})
 const emit = defineEmits(["select-plan", "create-new-plan", "toggle-page", "drop-courses"])
 
 const addNewPlan = ref<boolean>(false)

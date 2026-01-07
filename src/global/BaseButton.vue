@@ -1,5 +1,5 @@
 <template>
-  <button class="button"
+  <button class="button relative flex flex-row justify-center items-center text-center font-medium rounded-2xl cursor-pointer bg-[#0a843dff] hover:bg-[#12a356]"
     :disabled="props.disabled"
     :style="{
       '--button-width': `${buttonWidth}px`,
@@ -12,41 +12,35 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from 'vue'
+import { defineProps, withDefaults } from 'vue'
 
 interface Props {
     buttonName: string
     buttonWidth: number
     buttonHeight: number
     disabled?: boolean
-}
-const props = defineProps<Props>();
+} 
+
+const props = withDefaults(defineProps<Props>(), {
+    buttonName: "Button",
+    buttonWidth: 200,
+    buttonHeight: 60,
+    disabled: false
+});
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Roboto:wght@100..900&display=swap');
 
 .button {
-  position: relative;
   height: var(--button-height);
   width: var(--button-width);
-  display: flex;
-  justify-content: center; 
-  align-items: center;    
-  text-align: center;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 500;
-  border-radius: 20px;
-  background-color: #12a356;
+  font-family: 'GalaxiePolarisCondensed', sans-serif;
+
   border: 1px solid transparent; 
   transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
-.button:hover {
-  cursor: pointer;
-  border: 1px solid #ffffff;
-  background-color: #13753A;
-}
 
 .button:disabled {
   cursor: default;
@@ -56,12 +50,10 @@ const props = defineProps<Props>();
 
 .text-content {
   font-size: 36px;
-  font-family: 'Montserrat', sans-serif;
   color: #ffffff;
 }
 
 .disabled {
-  font-family: 'Montserrat', sans-serif;
   font-size: 48px;
   font-weight: 700;
   color: #c99700;

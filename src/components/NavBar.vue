@@ -1,5 +1,5 @@
 <template>
-  <div class="navbar fixed z-20 w-full bg-[#0c2340] backdrop-blur-md">
+  <div class="navbar fixed z-50 w-full bg-[#0c2340] backdrop-blur-md">
     <div class="navbar-content flex flex-row mx-4">
       <div class="site-title flex items-center h-full" @click.prevent="router.push('/')">POVO</div>
       <div class="flex flex-row items-center">
