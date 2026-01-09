@@ -1,0 +1,7 @@
+The DATA folder holds all applications of data management for front end composables to use. 
+Here, we implement an interface to pass functions to the frontend composables and then implementations of those interfaces for each version.
+These individual implementations define their versions of the functions, gathering and posting data from/to different places based on their implementation.
+
+In short, this folder is how we actually ACCESS DATA IN THE FRONTEND
+
+Defining question: how does the app access data?

@@ -65,7 +65,7 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits } from 'vue'
-import BaseButton from '../global/BaseButton.vue'
+import BaseButton from '@/components/global/BaseButton.vue';
 
 interface Course {
   name: string;

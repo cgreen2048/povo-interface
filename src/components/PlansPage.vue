@@ -69,7 +69,7 @@
 
 <script lang="ts" setup>
 import { ref, defineProps, defineEmits, withDefaults } from 'vue'
-import BaseButton from '../global/BaseButton.vue'
+import BaseButton from '@/components/global/BaseButton.vue';
 import type { Course, CoursePlans } from '@/App.vue';
 
 interface Props {

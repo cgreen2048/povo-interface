@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { defineEmits } from 'vue';
-import BaseButton from '../global/BaseButton.vue'
+import BaseButton from '@/components/global/BaseButton.vue';
 
 const emit = defineEmits(["toggle-page"]);
 

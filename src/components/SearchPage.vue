@@ -94,8 +94,8 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, ref } from 'vue';
-import BaseButton from '../global/BaseButton.vue'
-import BaseTab from '../global/BaseTab.vue'
+import BaseButton from '@/components/global/BaseButton.vue';
+import BaseTab from '@/components/global/BaseTab.vue';
 
 interface Props {
   coursePlans: Record<string, Record<string, Course>>;

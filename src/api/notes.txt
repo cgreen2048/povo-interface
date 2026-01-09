@@ -1,0 +1,3 @@
+The API folder is specifically used to directly call API-based functions and gather responses from the API.
+The functions in here are called from the repos, hiding their implementation entirely. 
+Here, the functions format the inputs from the repo into actual API calls and sends responses back in the format that the repos want. 

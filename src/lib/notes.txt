@@ -1,0 +1,3 @@
+The LIB folder contains pure, dependency free contracts that merely define data types (DTOs, repo interfaces, and shared utility types)
+If files in here were copied into another project, they'd still make sense.
+Zero state, zero dependencies on things created in this project

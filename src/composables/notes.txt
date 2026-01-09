@@ -1,0 +1,8 @@
+The COMPOSABLES folder provides functions that give individual Vue components (controllers) access to functions that store/grab data. 
+We structure it this way to hide the actual implementation of gathering data (via mock, HTTP, or Supabase) and just give components the functions they need.
+
+Why use composables when we can just grab the functions from the repos?
+- Composables handle the REACTIVE STATE of items relevant to the composable. The repos should be stateless, while composables directly handle the current state of the app
+- We can include refs, objects, etc. to be returned along with the functions to continue to abstract away especially since repos should not have Vue dependency (they're ts)
+
+Defining question: how does the app use data?

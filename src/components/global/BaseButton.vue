@@ -16,8 +16,7 @@ import { defineProps, withDefaults } from 'vue'
 
 interface Props {
     buttonName: string
-    buttonWidth: number
-    buttonHeight: number
+    size: 'sm' | 'md' | 'lg'
     disabled?: boolean
 } 
 

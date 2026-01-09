@@ -55,7 +55,7 @@
 import { VueCal } from 'vue-cal'
 import 'vue-cal/style'
 import { ref, defineProps, defineEmits, computed } from 'vue'
-import BaseButton from '@/global/BaseButton.vue'
+import BaseButton from '@/components/global/BaseButton.vue'
 
 interface Props {
   coursePlans: Record<string, Record<string, Course>>;
