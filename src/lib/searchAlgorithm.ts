@@ -18,11 +18,16 @@ const courseAbbrevs = [
 
 export function searchAlgorithm(courses: Course[], query: string)  {
     let searchCourses = structuredClone(courses);
-    const normalizedQuery = query.toUpperCase()
-        .replace(/\s+/g, ' ')
-        .replace(DAY_ALIAS_RE, match => dayAliases[match])
+    let normalizedQuery = query.toUpperCase()
+        .replace(/\s*[-–—]\s*/g, '-')  // normalize dashes
+        .replace(DAY_ALIAS_RE, match => dayAliases[match]) // replace day aliases
+        .replace(/\s+/g, ' ')         // normalize spaces
         .trim();
+    normalizedQuery = normalizeTimeDashes(normalizedQuery);
     
+    // This section handles HARD CONSTRAINTS EXTRACTED VIA REGEX
+
+    // For the future, switch to matchALl to parse between CRNs and course numbers
     const abbrevsRe = courseAbbrevs.join('|');
     // const forbiddenPrefix = `(?:${abbrevsRe})[\\s:-]*`;         // ?: is non-capturing group to grab course abbrev but don't save for memory
     // const crnPattern = `(?<!${forbiddenPrefix})\\b\\d{5}`;      // neg lookbehind to ensure no abbrev before CRN (\b\d{5}) with ?<!pattern
@@ -31,7 +36,9 @@ export function searchAlgorithm(courses: Course[], query: string)  {
     
     const crnMatches = normalizedQuery.match(/\b\d{5}\b/g);
     if (crnMatches) {
-        searchCourses = searchCourses.filter(course => crnMatches.includes(course.id.toString()));
+        searchCourses = searchCourses.filter(course => 
+            Object.values(course.sections)
+            .some(section => crnMatches.includes(section.crn.toString())));
     }
 
     const courseAbbrevPlusNumberPattern = `\\b(?:${abbrevsRe})[\\s:-]*\\d{5}\\b`;
@@ -62,28 +69,102 @@ export function searchAlgorithm(courses: Course[], query: string)  {
             )
         );
     }
+
+    const timeRangeMatches = normalizedQuery.match(TIME_RANGE_RE);
+    if (timeRangeMatches) {
+        searchCourses = searchCourses.filter(course =>
+            Object.values(course.sections).some(section =>
+            timeRangeMatches.includes(section.time)
+            )
+        );
+    }
+
+    const timeStartMatches = normalizedQuery.match(TIME_START_RE);
+    if (timeStartMatches) {
+        searchCourses = searchCourses.filter((course: Course) => {
+            return Object.values(course.sections).some((section: Section) => {
+                return timeStartMatches.includes(section.time);
+            })
+        })
+    }
+
+    const credits = extractCreditsFromQuery(normalizedQuery);
+    if (credits.length > 0) {
+        searchCourses = searchCourses.filter(course =>
+            Object.values(course.sections).some(section =>
+            credits.includes(section.credits)
+            )
+        );
+    }
+
+    // Add full list of attributes to filter out matches that aren't in the attributes (ex. "THAT")
+    const fulfilledRequirementsMatches = normalizedQuery.match(/\b[A-Z]{4}\b/g);
+    if (fulfilledRequirementsMatches) {
+        searchCourses = searchCourses.filter((course: Course) => 
+            Object.values(course.sections).some((section: Section) => 
+            section.fulfilledRequirements.some(req => fulfilledRequirementsMatches.includes(req)))
+        );
+    }
+
+
+    // This section handles similarity search that represents SOFT CONSTRAINTS/KEYWORDS
+
+    return searchCourses;
 }
 
-const findQueryDays = (daysStrings: string[]) => {
-    const days: DayCode[] = [];
+const findQueryDays = (daysStrings: string[]): DayCode[] => {
+    const days: Set<DayCode> = new Set();
     daysStrings.forEach((daysString: string) => {
         daysString = daysString.replace(/\s+/g, "");
         for (let i = 0; i < daysString.length; i++) {
-            if (daysString.startsWith("Th", i)) {
-                if (!days.includes("Th")) {
-                    days.push("Th");
-                }
+            if (daysString.startsWith("TH", i)) {
+                days.add("TH");
                 i++;
             }
             else {
                 const ch = daysString[i] as DayCode;
-                if (["M", "T", "W", "Th"].includes(ch) && !days.includes(ch)) {
-                    days.push(ch);
+                if (["M", "T", "W", "F"].includes(ch)) {
+                    days.add(ch);
                 }
             }
         } 
     })
-    return days;
+    return [...days];
+}
+
+const extractCreditsFromQuery = (query: string): number[] => {
+    const credits = new Set<number>();
+
+    // Handles "3 credits", "3 or 4 credits", "3/4 credits", "3-4 credits", etc.
+    const creditsRe = /\b(?:(?<a>[1-9]|1[0-9])\s*(?:OR|\/|-)\s*)?(?<b>[1-9]|1[0-9])\s*(?:CREDITS|CREDIT|CR|CRED)[\.\?]\b/gi;
+
+    for (const match of query.matchAll(creditsRe)) {
+        const a = match.groups?.a ? Number(match.groups.a) : null;
+        const b = Number(match.groups?.b ?? match[3]);
+
+        if (a !== null) {
+            credits.add(a);
+        }
+        credits.add(b);
+    }
+
+    return [...credits];
+}
+
+const TIME_TOKEN = /\d{1,2}(?::\d{2})?(?:am|pm)?/;
+
+const TIME_RANGE_RE = new RegExp(
+    `\\b(${TIME_TOKEN.source})-(${TIME_TOKEN.source})\\b`,
+    "gi"
+);
+
+const TIME_START_RE = new RegExp(
+    `\\b(${TIME_TOKEN.source})\\b`,
+    "gi"
+);
+
+function normalizeTimeDashes(query: string) {
+    return query.replace(TIME_RANGE_RE, "$1-$2");
 }
 
 
