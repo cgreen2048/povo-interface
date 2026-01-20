@@ -10,14 +10,23 @@
       <BaseButton :buttonName="'View My Schedule'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'SchedulePage')"></BaseButton>
       <BaseButton :buttonName="'Search for Courses'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'SearchPage')"></BaseButton>
     </span>
+    <button class="mt-20 bg-[#0a843dff] cursor-pointer" @click="runSearch">search</button>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineEmits } from 'vue';
 import BaseButton from '@/components/global/BaseButton.vue';
+import { useSearch } from '@/composables/useSearch';
+
+const { searchCourses } = useSearch();
 
 const emit = defineEmits(["toggle-page"]);
+
+const runSearch = async () => {
+  const results = await searchCourses("fadsf");
+  console.log("Results from HomePage search:", results);
+};
 
 </script>
 

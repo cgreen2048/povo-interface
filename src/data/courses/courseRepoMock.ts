@@ -1,5 +1,11 @@
 import { Course, CourseNotFoundError } from '@/lib/types';
 import { CourseRepo } from './courseRepo';
+import { sampleCourses } from '@/lib/sampleCourses';
+import { searchAlgorithm } from '@/lib/searchAlgorithm';
+
+// Initialize localStorage with sample courses if not already present
+localStorage.setItem('courses', JSON.stringify(sampleCourses));
+
 
 const getAllCoursesFromLocalStorage = (): Course[] => {
     const rawCourses = localStorage.getItem('courses');
@@ -59,6 +65,6 @@ export const courseRepoMock: CourseRepo = {
         return getCourseByIdFromLocalStorage(courseId);
     },
     searchCourses: async (query: string, term?: string) => {
-        return [];
+        return searchAlgorithm(getAllCoursesFromLocalStorage(), query);
     }
 }

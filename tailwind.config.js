@@ -4,8 +4,11 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        'montserrat': ['Montserrat', 'sans-serif'],
-        'merriweather': ['Merriweather', 'serif'],
+        garamond: ['AdobeGaramondPro', 'serif'],
+        polaris: ['GalaxiePolaris', 'sans-serif'],
+        polarisCondensed: ['GalaxiePolarisCondensed', 'sans-serif'],
+        montserrat: ['Montserrat', 'sans-serif'],
+        merriweather: ['Merriweather', 'serif'],
       },
       fontSize: {
         '2xs': '0.05rem',

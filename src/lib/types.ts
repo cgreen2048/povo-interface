@@ -28,9 +28,9 @@ export type CoursePlan = {
 export const DAY_CODES = [
   "M", "T", "W", "TH", "F",
   "MT", "MW", "MTH", "MF", "TW", "TTH", "TF", "WTH", "WF", "THF",
-  "MTW", "MTTH", "MTF", "MWTH", "MWF", "MTHF", "TWTH", "TWF", "TTHF", "WThF",
-  "MTWTh", "MTThF", "MWThF", "TWThF",
-  "MTWThF"
+  "MTW", "MTTH", "MTF", "MWTH", "MWF", "MTHF", "TWTH", "TWF", "TTHF", "WTHF",
+  "MTWTH", "MTTHF", "MWTHF", "TWTHF",
+  "MTWTHF"
 ] as const;
 
 export type DayCode = "M" | "T" | "W" | "TH" | "F";

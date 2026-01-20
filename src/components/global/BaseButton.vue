@@ -1,10 +1,7 @@
 <template>
   <button class="button relative flex flex-row justify-center items-center text-center font-medium rounded-2xl cursor-pointer bg-[#0a843dff] hover:bg-[#12a356]"
     :disabled="props.disabled"
-    :style="{
-      '--button-width': `${buttonWidth}px`,
-      '--button-height': `${buttonHeight}px`
-    }">
+    >
     <div class="text-content" :class="{ disabled: props.disabled }">
       {{ props.buttonName }}
     </div>

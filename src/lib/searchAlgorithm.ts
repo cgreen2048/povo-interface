@@ -2,9 +2,13 @@ import { Course, Section, DayCode, dayAliases, DAY_ALIAS_RE } from './types';
 import { courseAbbreviations } from './courseAbbreviations';
 import { courseAttributes } from './courseAttributes';
 
-export function searchAlgorithm(courses: Course[], query: string)  {
+export function searchAlgorithm(courses: Course[], query: string): Course[] {
+    if (!query || query.trim() === "") {
+        return courses;
+    }
+
     let searchCourses = structuredClone(courses);
-    let normalizedQuery = query.toUpperCase()
+    const normalizedQuery = query.toUpperCase()
         .replace(/\s*[-–—]\s*/g, '-')  // normalize dashes
         .replace(DAY_ALIAS_RE, match => dayAliases[match]) // replace day aliases
         .replace(/\s+/g, ' ')         // normalize spaces
@@ -18,20 +22,31 @@ export function searchAlgorithm(courses: Course[], query: string)  {
     // const crnRegex = new RegExp(crnPattern, 'g');               // g for global
     // const crnMatches = normalizedQuery.match(crnPattern);     
     
-    const crnMatches = normalizedQuery.match(/\b\d{5}\b/g);
-    if (crnMatches) {
-        searchCourses = searchCourses.filter(course => 
-            Object.values(course.sections)
-            .some(section => crnMatches.includes(section.crn.toString())));
-    }
+    // const crnMatches = normalizedQuery.match(/\b\d{5}\b/g);
+    // if (crnMatches) {
+    //     searchCourses = searchCourses.filter(course => 
+    //         Object.values(course.sections)
+    //         .some(section => crnMatches.includes(section.crn.toString())));
+    // }
 
     const courseAbbrevPlusNumberMatches = extractCourseAbbrevPlusNumbers(normalizedQuery);
-    if (courseAbbrevPlusNumberMatches.length > 0) {
-        const filteredMatchesByAbbrev = courseAbbrevPlusNumberMatches.filter(code => {
+    const filteredMatchesByAbbrev = courseAbbrevPlusNumberMatches.filter(code => {
             const abbrev = code.split(" ")[0];
             return courseAbbreviations.has(abbrev);
         });
+    const courseNumbers = new Set(filteredMatchesByAbbrev.map(code => code.split(" ")[1]));
 
+    const rawCrnMatches = normalizedQuery.match(/\b\d{5}\b/g) ?? [];
+    const crnMatches = rawCrnMatches.filter(crn => !courseNumbers.has(crn));
+
+    if (crnMatches.length > 0) {
+        const crnSet = new Set(crnMatches);
+        searchCourses = searchCourses.filter(course => 
+            Object.values(course.sections)
+            .some(section => crnSet.has(section.crn.toString())));
+    }
+
+    if (courseAbbrevPlusNumberMatches.length > 0) {
         searchCourses = searchCourses.filter(course => {
             const code = `${course.abbreviation.toUpperCase()} ${course.number}`; 
             return filteredMatchesByAbbrev.includes(code);
@@ -39,11 +54,26 @@ export function searchAlgorithm(courses: Course[], query: string)  {
     }
 
 
+
+    const abbrevTokens = normalizedQuery.match(/\b[A-Z0-9]{2,4}\b/g) ?? [];
+    const deptOnlyTokens: string[] = [];
+    const attributeOnlyTokens: string[] = [];
+    const bothTokens: string[] = [];
+    for (const token of abbrevTokens) {
+        const isDept = courseAbbreviations.has(token);
+        const isAttr = courseAttributes.has(token);
+
+        if (isDept && isAttr) bothTokens.push(token);
+        else if (isDept) deptOnlyTokens.push(token);
+        else if (isAttr) attributeOnlyTokens.push(token);
+    }
+    console.log(deptOnlyTokens, attributeOnlyTokens, bothTokens);
+
     // Require at least one day code in first group, then in additional groups, match subsequent days w/priority given to Th
     const dayMatches = normalizedQuery.match(/\b(?:TH|[MTWF])(?:\s*(?:TH|[MTWF]))*\b/g);
     const days = dayMatches ? findQueryDays(dayMatches) : [];
 
-    const timeRangeMatches = normalizedQuery.match(TIME_RANGE_RE);
+    const timeRangeMatches = normalizedQuery.match(TIME_RANGE_RE) ?? [];
 
     // const timeStartMatches = normalizedQuery.match(TIME_START_RE);
     // if (timeStartMatches) {
@@ -55,22 +85,32 @@ export function searchAlgorithm(courses: Course[], query: string)  {
     // }
 
     const credits = extractCreditsFromQuery(normalizedQuery);
-
-    // Add full list of attributes to filter out matches that aren't in the attributes (ex. "THAT")
-    const rawAttributeMatches = normalizedQuery.match(/\b[A-Z0-9]{2,4}\b/g);
-    const filteredAttributeMatches = rawAttributeMatches ? rawAttributeMatches.filter(attr => courseAttributes.has(attr)) : [];
-
-    const q = {
-        days: days ?? [],
-        timeRanges: timeRangeMatches ?? [],
-        credits: credits ?? [],
-        attributes: filteredAttributeMatches ?? []
-    }
     searchCourses = searchCourses.filter((course: Course) =>
         Object.values(course.sections).some((section: Section) =>
-            sectionSatisfiesAllMatches(section, q)
+            sectionSatisfiesAllMatches(
+                course.abbreviation.toUpperCase().trim(),
+                section,
+                days,
+                timeRangeMatches,
+                credits,
+                deptOnlyTokens,
+                attributeOnlyTokens,
+                bothTokens
+            )
         )
     );
+
+    const hasAnyMatches =
+        crnMatches.length > 0 ||
+        courseAbbrevPlusNumberMatches.length > 0 ||
+        deptOnlyTokens.length > 0 ||
+        attributeOnlyTokens.length > 0 ||
+        bothTokens.length > 0 ||
+        days.length > 0 ||
+        timeRangeMatches.length > 0 ||
+        credits.length > 0;
+
+    if (!hasAnyMatches) return [];
 
 
     // This section handles similarity search that represents SOFT CONSTRAINTS/KEYWORDS
@@ -108,7 +148,7 @@ const extractCreditsFromQuery = (query: string): number[] => {
     const credits = new Set<number>();
 
     // Handles "3 credits", "3 or 4 credits", "3/4 credits", "3-4 credits", etc.
-    const creditsRe = /\b(?:(?<a>[1-9]|1[0-9])\s*(?:OR|\/|-)\s*)?(?<b>[1-9]|1[0-9])\s*(?:CREDITS|CREDIT|CR|CRED)(?:[\.\?])?\b/gi;
+    const creditsRe = /\b(?:(?<a>[1-9]|1[0-9])\s*(?:OR|\/|-)\s*)?(?<b>[1-9]|1[0-9])\s*(?:CREDITS|CREDIT|CR|CRED)(?:[.?])?\b/gi;
 
     for (const match of query.matchAll(creditsRe)) {
         const a = match.groups?.a ? Number(match.groups.a) : null;
@@ -135,27 +175,34 @@ const TIME_RANGE_RE = new RegExp(
 //     "gi"
 // );
 
-const sectionSatisfiesAllMatches = (section: Section, q: {
+const sectionSatisfiesAllMatches = (
+    courseAbbrev: string,
+    // maybe add name later
+    section: Section,
     days: DayCode[],
     timeRanges: string[],
     credits: number[],
-    attributes: string[]
-}): boolean => {
+    depts: string[],
+    attributes: string[],
+    both: string[]
+): boolean => {
+    if (days.length > 0 && days.some(day => !section.days.includes(day))) return false;
+    if (timeRanges.length > 0 && !timeRanges.includes(section.time.toUpperCase())) return false;
+    if (credits.length > 0 && !credits.includes(section.credits)) return false;
 
-    if (q.days.length > 0 && q.days.some(day => !section.days.includes(day))) {
-        return false;
-    }
+    // Filter out courses that aren't in any (OR) of the depts in the list
+    if (depts.length > 0 && !depts.includes(courseAbbrev) && !both.includes(courseAbbrev)) return false;
 
-    if (q.timeRanges.length > 0 && !q.timeRanges.includes(section.time.toUpperCase())) {
-        return false;
-    }
+    // Filter out courses that don't fulfill all (AND) of the attributes in the list
+    if (attributes.length > 0 && !attributes.every(attr => section.fulfilledRequirements.includes(attr))) return false;
 
-    if (q.credits.length > 0 && !q.credits.includes(section.credits)) {
-        return false;
-    }
-
-    if (q.attributes.length > 0 && !section.fulfilledRequirements.some(attr => q.attributes.includes(attr))) {
-        return false;
+    // Some tokens could be either dept or attribute, so we check if at least one matches
+    const inDept = depts.includes(courseAbbrev);
+    if (both.length > 0) {
+        for (const token of both) {
+            // for every token in both, check if it matches the course abbrev or any fulfilled requirements
+            if (!inDept && courseAbbrev !== token && !section.fulfilledRequirements.includes(token)) return false;
+        }
     }
 
     return true;
