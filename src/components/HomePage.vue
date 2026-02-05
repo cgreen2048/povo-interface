@@ -1,32 +1,31 @@
 <template>
-  <div class="flex flex-col items-center justify-center gap-12">
+  <div class="w-full h-full flex flex-col items-center justify-center gap-12">
     <span class="title-card w-auto h-auto p-8 bg-[#0c2340] text-white text-6xl rounded-3xl font-bold">POVO Course Registration</span>
     <span class="header-info">Click one of the page buttons below to get started on registration!</span>
-    <span class="home-buttons">
-      <BaseButton :buttonName="'My Course Plans'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'CoursePlansPage')"></BaseButton>
-      <BaseButton :buttonName="'Course Registration'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'CourseRegistrationPage')"></BaseButton>
-    </span>
-    <span class="home-buttons">
-      <BaseButton :buttonName="'View My Schedule'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'SchedulePage')"></BaseButton>
-      <BaseButton :buttonName="'Search for Courses'" :buttonWidth="364" :buttonHeight="146" @click="emit('toggle-page', 'SearchPage')"></BaseButton>
-    </span>
-    <button class="mt-20 bg-[#0a843dff] cursor-pointer" @click="runSearch">search</button>
+    <div class="flex flex-col gap-20 items-center justify-center">
+      <span class="home-buttons">
+        <BaseButton :label="'My Course Plans'" :size="'lg'" @click="emit('toggle-page', 'CoursePlansPage')"></BaseButton>
+        <BaseButton :label="'Course Registration'" :size="'lg'" @click="emit('toggle-page', 'CourseRegistrationPage')"></BaseButton>
+      </span>
+      <span class="home-buttons">
+        <BaseButton :label="'View My Schedule'" :size="'lg'" @click="emit('toggle-page', 'SchedulePage')"></BaseButton>
+        <BaseButton :label="'Search for Courses'" :size="'lg'" @click="emit('toggle-page', 'SearchPage')"></BaseButton>
+      </span>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { defineEmits } from 'vue';
 import BaseButton from '@/components/global/BaseButton.vue';
-import { useSearch } from '@/composables/useSearch';
 
-const { searchCourses } = useSearch();
 
 const emit = defineEmits(["toggle-page"]);
 
-const runSearch = async () => {
-  const results = await searchCourses("fadsf");
-  console.log("Results from HomePage search:", results);
-};
+// const runSearch = async () => {
+//   const results = await searchCourses("fadsf");
+//   console.log("Results from HomePage search:", results);
+// };
 
 </script>
 

@@ -1,8 +1,8 @@
 <template>
   <div class="navbar fixed z-50 w-full bg-[#0c2340] backdrop-blur-md">
-    <div class="navbar-content flex flex-row mx-4">
-      <div class="site-title flex items-center h-full" @click.prevent="router.push('/')">POVO</div>
-      <div class="flex flex-row items-center">
+    <div class="navbar-content flex flex-row mx-4 h-10 items-center justify-between">
+      <div class="site-title flex items-center h-full font-bold ml-2 cursor-pointer text-[#eaf2ef] text-2xl pt-[2px]" @click.prevent="router.push('/')">POVO</div>
+      <div class="flex flex-row items-center pt-[2px]">
         <router-link to="/" class="link text-base">Home</router-link>
         <router-link to="/plans" class="link text-base">Plans</router-link>
         <router-link to="/registration" class="link text-base">Registration</router-link>
@@ -58,19 +58,6 @@ const handleNavBarVisibility = (event?: Event): void => {
   transition: transform .5s ease;
 }
 
-.navbar-content {
-  display: flex;
-  justify-content: space-between;
-  height: 40px;
-}
-
-.site-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #eaf2ef;
-  cursor: pointer;
-  transition: transform 0.2s ease-in;
-}
 
 /* .site-title:hover {
   color: #b0cfc2; 

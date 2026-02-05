@@ -1,47 +1,49 @@
 <template>
-  <div class="container">
-    <div class="plans-block">
+  <div class="flex flex-row gap-4 w-full h-full items-stretch">
+    <div class="plans-block flex-1 h-full flex flex-col items-center justify-between">
       <div class="plans">
-        <div class="plans-title">Plans</div>
-        <BaseButton v-for="(courses, plan) in props.coursePlans" :key="plan"
-        class="plan-button"
-          :buttonName="plan"
-          :buttonWidth="250"
-          :buttonHeight="80"
-          :class="{ 'active-plan': props.currentPlan === plan }"
-          @click="emit('select-plan', plan)">
-        </BaseButton>
-        <BaseButton :buttonName="'New Plan +'" :buttonWidth="250" :buttonHeight="80" class="plan-button" @click="addNewPlan = !addNewPlan"></BaseButton>
+        <div class="plans-title font-polarisCondensed text-5xl font-medium text-white mt-2 mb-6">Plans</div>
+        <div class="flex flex-col gap-4 mb-4 min-h-0 overflow-auto">
+            <BaseButton v-for="(_, plan) in props.coursePlans" :key="plan"
+              :label="plan"
+              :size="'med'"
+              :class="{ 'active-plan': props.currentPlan === plan }"
+              @click="emit('select-plan', plan)">
+          </BaseButton>
+          <BaseButton :label="'New Plan +'" :size="'med'" @click="addNewPlan = !addNewPlan"></BaseButton>
+        </div>
       </div>
-      <BaseButton v-if="!editPlan" :buttonName="'Edit Plan'" :buttonWidth="200" :buttonHeight="50" class="plan-button" @click="editPlan = !editPlan"></BaseButton>
+      <BaseButton v-if="!editPlan" :label="'Edit Plan'" :size="'med'" class="mb-4" @click="editPlan = !editPlan"></BaseButton>
     </div>
 
-    <div class="classes-block">
-      <div v-for="(course, number) in props.coursePlans[props.currentPlan]"
-        :key="number"
-        class="class-entry">
-        <div class="class-info">
-          <span class="class-title" @click="openMoreInfo(number, course)">
-            <template v-if="editPlan">
-              <input type="checkbox" class="class-checkbox" @click.stop="selectCourse(number)">
-            </template>
-            {{ number }} {{ course.name }}
-            <span v-if="course.registered" class="check-icon">&#x2714;</span>
-            <span v-else-if="course.inPlan" class="check-icon outlined">&#9993;</span>
-          </span>
+    <div class="classes-block flex-1 h-full">
+      <div class="min-h-0 overflow-auto">
+        <div v-for="(course, number) in props.coursePlans[props.currentPlan]"
+          :key="number"
+          class="class-entry">
+          <div class="class-info">
+            <span class="class-title" @click="openMoreInfo(number, course)">
+              <template v-if="editPlan">
+                <input type="checkbox" class="class-checkbox" @click.stop="selectCourse(number)">
+              </template>
+              {{ number }} {{ course.name }}
+              <span v-if="course.registered" class="check-icon">&#x2714;</span>
+              <span v-else-if="course.inPlan" class="check-icon outlined">&#9993;</span>
+            </span>
+          </div>
+          <div class="class-time-block">
+            <div class="class-time">{{ translateDates(course.time, course.dates) }}</div>
+            <div class="time-conflicts" v-if="checkForConflicts(course)">Time Conflict: {{ checkForConflicts(course) }}</div>
+          </div>
         </div>
-        <div class="class-time-block">
-          <div class="class-time">{{ translateDates(course.time, course.dates) }}</div>
-          <div class="time-conflicts" v-if="checkForConflicts(course)">Time Conflict: {{ checkForConflicts(course) }}</div>
+        <div class="class-entry add-class" @click="emit('toggle-page', 'SearchPage')">
+          <span>Add Class From Search</span>
+          <span class="plus-sign">+</span>
         </div>
-      </div>
-      <div class="class-entry add-class" @click="emit('toggle-page', 'SearchPage')">
-        <span>Add Class From Search</span>
-        <span class="plus-sign">+</span>
-      </div>
-      <div class="editingButtons" v-if="editPlan">
-        <BaseButton :buttonName="'Drop Courses'" :buttonWidth="400" :buttonHeight="50" class="editing-button-left" @click="dropCourses"></BaseButton>
-        <BaseButton :buttonName="'Cancel'" :buttonWidth="400" :buttonHeight="50" class="editing-button-right" @click="editPlan = !editPlan"></BaseButton>
+        <div class="editingButtons" v-if="editPlan">
+          <BaseButton :buttonName="'Drop Courses'" :buttonWidth="400" :buttonHeight="50" class="editing-button-left" @click="dropCourses"></BaseButton>
+          <BaseButton :buttonName="'Cancel'" :buttonWidth="400" :buttonHeight="50" class="editing-button-right" @click="editPlan = !editPlan"></BaseButton>
+        </div>
       </div>
     </div>
   </div>
@@ -221,40 +223,19 @@ const dropCourses = () => {
 
 .container {
   display: flex;
-  padding: 20px;
-  width: 100%;
+  flex-direction: row;
   gap: 20px;
-  box-sizing: border-box;
-  justify-content: center;
 }
 
 .plans-block {
   background-color: #0b2341;
   border: 2px solid #807e7e;
   color: white;
-  padding: 10px;
   border-radius: 10px;
-  width: 300px;
-  height: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  font-family: 'Roboto', sans-serif;
 }
 
 .plans-title {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  color: #f4a300;
-  font-size: 48px;
-  text-align: center;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-
-.plan-button {
-  margin-bottom: 20px;
+  font-family: 'GalaxiePolaris', sans-serif;
 }
 
 .active-plan {
@@ -268,8 +249,7 @@ const dropCourses = () => {
 }
 
 .classes-block {
-  width: 1200px;
-  background-color: #0b2341;
+  background-color: #ffffff;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -285,7 +265,7 @@ const dropCourses = () => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  font-family: 'Roboto', sans-serif;
+  font-family: 'GalaxiePolarisCondensed', sans-serif;
   font-size: 24px;
 }
 

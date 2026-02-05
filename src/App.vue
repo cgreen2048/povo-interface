@@ -3,17 +3,17 @@
     <NavBar v-if="route.name" class="lg:block" />
 
     <div
-      class="main-area text-center w-full h-full min-h-screen items-center justify-center flex flex-col overflow-auto p-4"
+      class="main-area text-center w-full min-h-screen flex flex-col items-stretch p-4 pt-10"
       id="main-area"
     >
-      <div class="flex flex-1 items-center justify-center">
+      <div class="flex flex-1 w-full min-h-0 min-w-0">
         <Transition name="fade" mode="out-in">
-          <router-view class="z-10 w-full" />
+          <router-view class="z-10 w-full h-full min-h-0 min-w-0" />
         </Transition>
       </div>
 
-      <footer class="w-full justify-center mt-auto text-xs lg:text-sm text-muted-green z-10">
-        <span>© 2025 Clair Green. All rights reserved.</span>
+      <footer class="w-full mt-auto text-xs lg:text-sm text-muted-green z-10">
+        <span>© {{ currentYear }} Clair Green. All rights reserved.</span>
       </footer>
     </div>
   </div>
@@ -91,6 +91,7 @@ import NavBar from './components/NavBar.vue';
 // v-if="route.name != 'Home'"
 const route = useRoute();
 
+const currentYear = new Date().getFullYear();
 
 // ### TABS BAR ###
 // const currentPage = ref<string>("HomePage");
