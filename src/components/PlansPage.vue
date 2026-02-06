@@ -58,6 +58,9 @@
             <div class="time-conflicts" v-if="checkForConflicts(course)">Time Conflict: {{ checkForConflicts(course) }}</div>
           </div>
         </div>
+        <div v-for="course in courses" :key="course.id">
+          <BaseCourse :course="course"></BaseCourse>
+        </div>
         <div class="class-entry add-class" @click="emit('toggle-page', 'SearchPage')">
           <span>Add Class From Search</span>
           <span class="plus-sign">+</span>
@@ -95,11 +98,55 @@
 import { ref, defineProps, defineEmits, withDefaults } from 'vue'
 import BaseButton from '@/components/global/BaseButton.vue';
 import type { Course, CoursePlans } from '@/App.vue';
+import BaseCourse from '@/components/global/BaseCourse.vue';
 
 interface Props {
   coursePlans?: CoursePlans
   currentPlan?: string
 }
+
+const courses: Course[] = [
+  {
+    id: 1,
+    name: "LGBTQ American History",
+    number: "30185",
+    abbreviation: "AMST",
+    sections: 
+      {
+        0: {
+          crn: 40677,
+          instructor: "Anthony Petro",
+          time: "12:30PM-1:45PM",
+          days: "TTh",
+          credits: 3,
+          location: "O'Shaughnessy Hall 102",
+          prerequisites: [],
+          studentRequirements: [],
+          fulfilledRequirements: []
+        }
+      }
+  },
+  {
+    id: 2,
+    name: "Operating System Principles",
+    number: "30341",
+    abbreviation: "CSE",
+    sections: 
+      {
+        0: {
+          crn: 40677,
+          instructor: "Douglas Thain",
+          time: "9:30AM-10:45AM",
+          days: "TTh",
+          credits: 3,
+          location: "Pasquerilla Center 107",
+          prerequisites: [],
+          studentRequirements: [],
+          fulfilledRequirements: []
+        }
+      }
+  },
+]
 
 const props = withDefaults(defineProps<Props>(), {
   coursePlans: {
@@ -292,7 +339,6 @@ const dropCourses = () => {
 
 .class-title {
   font-weight: bold;
-  text-decoration: underline;
   font-family: 'Roboto', sans-serif;
   transition: color 0.2s ease, text-decoration 0.2s ease;
 }
