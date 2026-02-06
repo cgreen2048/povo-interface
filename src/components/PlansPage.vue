@@ -1,23 +1,45 @@
 <template>
   <div class="flex flex-row gap-4 w-full h-full items-stretch">
-    <div class="plans-block flex-1 h-full flex flex-col items-center justify-between">
-      <div class="plans">
-        <div class="plans-title font-polarisCondensed text-5xl font-medium text-white mt-2 mb-6">Plans</div>
-        <div class="flex flex-col gap-4 mb-4 min-h-0 overflow-auto">
+    <div class="plans-block flex-none w-fit h-full flex flex-col items-center justify-between rounded-lg bg-[#eaf2ef]">
+      <div class="plans flex flex-col flex-1 min-h-0">
+        <div class="flex items-center justify-center font-polarisCondensed w-full bg-[#0a843dff] py-4 rounded-t-md">
+          <span class="text-5xl font-medium text-white">Plans</span>
+        </div>
+        <div class="flex flex-1 flex-col gap-4 mb-4 min-h-0 h-fit overflow-y-scroll px-8 py-4 border-y-2 border-black">
+            <BaseButton v-for="(_, plan) in props.coursePlans" :key="plan"
+              :label="plan"
+              :size="'med'"
+              :class="{ 'active-plan': props.currentPlan === plan }"
+              @click="emit('select-plan', plan)">
+            </BaseButton>
             <BaseButton v-for="(_, plan) in props.coursePlans" :key="plan"
               :label="plan"
               :size="'med'"
               :class="{ 'active-plan': props.currentPlan === plan }"
               @click="emit('select-plan', plan)">
           </BaseButton>
-          <BaseButton :label="'New Plan +'" :size="'med'" @click="addNewPlan = !addNewPlan"></BaseButton>
+          <BaseButton v-for="(_, plan) in props.coursePlans" :key="plan"
+              :label="plan"
+              :size="'med'"
+              :class="{ 'active-plan': props.currentPlan === plan }"
+              @click="emit('select-plan', plan)">
+          </BaseButton>
+          <BaseButton v-for="(_, plan) in props.coursePlans" :key="plan"
+              :label="plan"
+              :size="'med'"
+              :class="{ 'active-plan': props.currentPlan === plan }"
+              @click="emit('select-plan', plan)">
+          </BaseButton>
         </div>
       </div>
-      <BaseButton v-if="!editPlan" :label="'Edit Plan'" :size="'med'" class="mb-4" @click="editPlan = !editPlan"></BaseButton>
+      <div class="flex flex-col items-center justify-center gap-4">
+        <BaseButton :label="'New Plan +'" :size="'med'" @click="addNewPlan = !addNewPlan"></BaseButton>
+        <BaseButton v-if="!editPlan" :label="'Edit Plan'" :size="'med'" class="mb-4" @click="editPlan = !editPlan"></BaseButton>
+      </div>
     </div>
 
-    <div class="classes-block flex-1 h-full">
-      <div class="min-h-0 overflow-auto">
+    <div class="classes-block flex-1 min-w-0 h-full">
+      <div class="min-h-0 overflow-y-scroll flex flex-1 flex-col h-fit">
         <div v-for="(course, number) in props.coursePlans[props.currentPlan]"
           :key="number"
           class="class-entry">
@@ -221,21 +243,8 @@ const dropCourses = () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&family=Roboto:wght@100..900&display=swap'); 
 
-.container {
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-}
-
 .plans-block {
-  background-color: #0b2341;
-  border: 2px solid #807e7e;
-  color: white;
-  border-radius: 10px;
-}
-
-.plans-title {
-  font-family: 'GalaxiePolaris', sans-serif;
+  border: 2px solid black;
 }
 
 .active-plan {

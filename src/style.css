@@ -183,3 +183,18 @@
   font-weight: 600;
   font-style: normal;
 }
+
+/* Custom scrollbar styling for all elements */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* Firefox scrollbar styling */
+* {
+  scrollbar-color: #00823e white;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+
+}
+

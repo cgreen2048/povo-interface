@@ -65,8 +65,7 @@ const handleNavBarVisibility = (event?: Event): void => {
   transform: scale(1.0375)
 } */
 
-.link,
-.links-dropdown {
+.link {
   text-decoration: none;
   color: #f0f7f2;
   cursor: pointer;

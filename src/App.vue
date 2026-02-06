@@ -3,10 +3,10 @@
     <NavBar v-if="route.name" class="lg:block" />
 
     <div
-      class="main-area text-center w-full min-h-screen flex flex-col items-stretch p-4 pt-10"
+      class="main-area text-center w-full h-screen flex flex-col items-stretch p-4 pt-10"
       id="main-area"
     >
-      <div class="flex flex-1 w-full min-h-0 min-w-0">
+      <div class="flex flex-1 w-full min-h-0 min-w-0 h-screen my-2">
         <Transition name="fade" mode="out-in">
           <router-view class="z-10 w-full h-full min-h-0 min-w-0" />
         </Transition>
