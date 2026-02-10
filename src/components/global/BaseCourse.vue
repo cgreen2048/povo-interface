@@ -25,7 +25,7 @@
         </div>
 
         <!-- Right: instructor -->
-        <div class="text-sm text-gray-700 whitespace-nowrap ml-auto">A. Petro</div>
+        <div class="text-sm text-gray-700 whitespace-nowrap ml-auto">{{ course.sections[Object.keys(course.sections)[0]]?.instructor }}</div>
       </div>
     </div>
     <div v-if="moreInfo" class="
